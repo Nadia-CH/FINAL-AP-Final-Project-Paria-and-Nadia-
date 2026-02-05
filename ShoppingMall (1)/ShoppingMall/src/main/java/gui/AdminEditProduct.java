@@ -51,8 +51,6 @@ public class AdminEditProduct extends JDialog implements ActionListener {
         setLocationRelativeTo(parent);
     }
 
-
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == changeImage) {

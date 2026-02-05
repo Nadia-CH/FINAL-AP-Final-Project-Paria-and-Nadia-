@@ -1,7 +1,9 @@
 import gui.MainPanel;
+import gui.*;
 import model.Product;
 import java.util.Scanner;
 import repository.ProductRepository;
+//import repository.ProductRepository;
 import gui.AdminEntryPanel;
 
 // this is a test run
@@ -29,6 +31,16 @@ public class Main {
         for (int i = 0; i < pr.getAll().size(); i++) {
             System.out.println(pr.getAll().get(i).getInfo());
         }
+//        ProductRepository pr = new ProductRepository();
+//        pr.addItem(yuyu);
+//        pr.addItem(car);
+//        pr.addItem(desk);
+//        desk.setStockQuantity(60);
+//        desk.decreaseStock(5);
+//        pr.updateItem(desk);
+//        for (int i = 0; i < pr.getAll().size(); i++) {
+//            System.out.println(pr.getAll().get(i).getInfo());
+//        }
 
     }
 }
