@@ -2,7 +2,6 @@ import gui.MainPanel;
 import gui.*;
 import model.Product;
 import java.util.Scanner;
-import repository.ProductRepository;
 //import repository.ProductRepository;
 import gui.AdminEntryPanel;
 
@@ -21,16 +20,6 @@ public class Main {
         System.out.println(car.getInfo());
         Product desk = new Product("desk", "furniture", 79.9);
 
-        ProductRepository pr = new ProductRepository();
-        pr.addItem(yuyu);
-        pr.addItem(car);
-        pr.addItem(desk);
-        desk.setStockQuantity(60);
-        desk.decreaseStock(5);
-        pr.updateItem(desk);
-        for (int i = 0; i < pr.getAll().size(); i++) {
-            System.out.println(pr.getAll().get(i).getInfo());
-        }
 //        ProductRepository pr = new ProductRepository();
 //        pr.addItem(yuyu);
 //        pr.addItem(car);
