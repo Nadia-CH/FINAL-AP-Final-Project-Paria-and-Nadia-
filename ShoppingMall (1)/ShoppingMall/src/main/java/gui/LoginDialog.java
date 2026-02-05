@@ -101,13 +101,10 @@ public class LoginDialog extends JDialog implements ActionListener {
                 setRole("Admin");
                 dispose();
 
-            }else if (isCustomer()){
+            } else {
                 setLoginSuccess(true);
                 setRole("Customer");
                 dispose();
-
-            } else {
-                setLoginSuccess(false);
             }
         } else if (e.getSource() == cancelButton) {
             System.exit(0);

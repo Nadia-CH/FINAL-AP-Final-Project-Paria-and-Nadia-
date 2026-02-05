@@ -9,7 +9,8 @@ import java.awt.event.ActionListener;
 
 public class AdminEntryPanel  extends JPanel implements ActionListener {
 
-    static MainPanel mainpnl;
+    private static MainPanel mainpnl;
+
     private JButton btnAddProduct;
     private JButton btnLogout;
 

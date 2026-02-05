@@ -11,8 +11,6 @@ public class MainPanel {
     JPanel mainpanel = new JPanel(cardlayout);
 
     //****** all panels ***************
-
-
     //****** related to admin *********
     AdminEntryPanel adminpanel = new AdminEntryPanel(this);
 
@@ -22,7 +20,6 @@ public class MainPanel {
     CustomerEntryPanel customerpanel = new CustomerEntryPanel();
 
     //**********************************
-
     public MainPanel() {
         AdminEntryPanel adminpanel = new AdminEntryPanel(this);
 
@@ -30,8 +27,6 @@ public class MainPanel {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
-
-
 
 //login ********************************
         LoginDialog logindialog = new LoginDialog(frame);
@@ -46,8 +41,6 @@ public class MainPanel {
         }
 
         mainpanel.add(adminpanel, "Admin");
-
-
         mainpanel.add(customerpanel, "Customer");
        // mainpanel.add(checkoutPanel, "checkoutPanel");
 
