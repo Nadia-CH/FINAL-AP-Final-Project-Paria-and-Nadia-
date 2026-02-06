@@ -1,6 +1,8 @@
 package gui;
 
 import com.formdev.flatlaf.FlatLightLaf; // Make sure FlatLaf is in your pom.xml
+import model.Product;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -13,9 +15,11 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
 
     private JButton btnAddProduct;
     private JButton btnLogout;
+    private Product product;
 
-    public AdminEntryPanel(MainPanel main) {
+    public AdminEntryPanel(MainPanel main, Product p1) {
         this.mainpnl = main;
+        this.product = p1;
 
         // Apply FlatLaf if it hasn't been applied in Main
         FlatLightLaf.setup();
@@ -112,7 +116,7 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
 
         // Fill with cards
         for (int i = 0; i < 10; i++) {
-            AdminProductView card = new AdminProductView("Coffee", 300.0, 18, "");
+            AdminProductView card = new AdminProductView(product,  "");
             listContainer.add(card);
         }
         listContainer.add(Box.createVerticalGlue());
@@ -164,7 +168,7 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Admin System");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(new AdminEntryPanel(mainpnl));
+            frame.add(new AdminEntryPanel(mainpnl,new Product("ee","ww",300 )));
             frame.setSize(1200, 600);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
@@ -180,7 +184,7 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         }
         if(e.getSource()== btnLogout) {
             mainpnl.frame.dispose();
-            new MainPanel();
+            new MainPanel(product);
         }
     }
 

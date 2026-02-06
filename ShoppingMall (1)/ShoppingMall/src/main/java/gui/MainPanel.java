@@ -1,5 +1,7 @@
 package gui;
 
+import model.Product;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,10 +11,12 @@ public class MainPanel {
     JFrame frame = new JFrame("Shopping Mall");
     CardLayout cardlayout = new CardLayout();
     JPanel mainpanel = new JPanel(cardlayout);
+    private Product product;
 
     //****** all panels ***************
     //****** related to admin *********
-    AdminEntryPanel adminpanel = new AdminEntryPanel(this);
+    AdminEntryPanel adminpanel;
+
 
     //****** related to customer *******
 
@@ -20,8 +24,9 @@ public class MainPanel {
     CustomerEntryPanel customerpanel = new CustomerEntryPanel();
 
     //**********************************
-    public MainPanel() {
-        AdminEntryPanel adminpanel = new AdminEntryPanel(this);
+    public MainPanel(Product p1) {
+        this.product = p1;
+        AdminEntryPanel adminpanel = new AdminEntryPanel(this,product);
 
 
         frame.setResizable(false);

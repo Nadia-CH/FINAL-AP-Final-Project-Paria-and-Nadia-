@@ -1,4 +1,6 @@
 package gui;
+import model.Product;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,11 +12,16 @@ public class AdminProductView extends JPanel implements ActionListener {
 
     JButton btnDelete = new JButton("Delete");
     JButton btnDetails = new JButton("Details");
-    private double price;
-    private int stock;
+
+    private Product product;
 
 
-    public AdminProductView(String name, double price, int stock, String imgPath) {
+
+
+
+    public AdminProductView(Product p1, String imgPath) {
+        this.product = p1;
+
         setLayout(new BorderLayout(15, 10));
         setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 2, 0, Color.LIGHT_GRAY), // Bottom border line
@@ -49,6 +56,11 @@ public class AdminProductView extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == btnDetails ) {
+            Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
+            AdminViewDetail showDetail = new AdminViewDetail(parentFrame, product);
+            showDetail.setVisible(true);
+
+
             //show details
 
         }
@@ -58,7 +70,7 @@ public class AdminProductView extends JPanel implements ActionListener {
         }
         if(e.getSource() == btnEdit) {
             Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-            AdminEditProduct editDlg = new AdminEditProduct(parentFrame, this.getName(), this.price, this.stock);
+            AdminEditProduct editDlg = new AdminEditProduct(parentFrame, product.getName(), product.getPrice(), product.getStockQuantity());
             editDlg.setVisible(true);
             //open AdminEditProduct
 

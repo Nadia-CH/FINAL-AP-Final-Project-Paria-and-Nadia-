@@ -1,4 +1,4 @@
-import gui.MainPanel;
+import  gui.MainPanel;
 import model.Product;
 //import repository.ProductRepository;
 
@@ -7,7 +7,7 @@ import model.Product;
 public class Main {
     public static void main(String[] args) {
 
-        MainPanel mainPanel = new MainPanel();
+
 
         Product yuyu = new Product("yuyu", "toy", 9.99);
         yuyu.setStockQuantity(10);
@@ -17,6 +17,9 @@ public class Main {
         Product car = new Product("car", "toy", 12.0);
         System.out.println(car.getInfo());
         Product desk = new Product("desk", "furniture", 79.9);
+
+
+        MainPanel mainPanel = new MainPanel(desk);
 
 //        ProductRepository pr = new ProductRepository();
 //        pr.addItem(yuyu);
