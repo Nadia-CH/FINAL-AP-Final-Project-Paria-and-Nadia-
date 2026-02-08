@@ -24,6 +24,8 @@ public class AdminViewDetail extends JDialog {
         JPanel mainPanel = new JPanel(new GridLayout(5, 2, 10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+//        mainPanel.add(new JLabel(product.getInfo()));
+
         mainPanel.add(new JLabel("Product ID:"));
         mainPanel.add(new JLabel(String.valueOf(product.getProductId())));
 
@@ -50,4 +52,3 @@ public class AdminViewDetail extends JDialog {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 }
-

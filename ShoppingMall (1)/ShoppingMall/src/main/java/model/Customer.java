@@ -3,12 +3,26 @@ package model;
 public class Customer extends User {
 
     private int id;
-    private double balance = 100;
+
     private static int idgenerator = 2000;
+
+    // 1. EMPTY CONSTRUCTOR (Crucial for GSON loading)
+    public Customer() {
+        super("", ""); // Just satisfying the parent User class
+    }
 
     public Customer(String username, String password) {
         super(username, password);
         this.id = idgenerator++;
+    }
+
+    public Customer(int id, String username, String password) {
+        super(username, password);
+        this.id = id;
+        // Important: Update generator so we don't re-use this ID later
+        if (id >= idgenerator) {
+            idgenerator = id + 1;
+        }
     }
 
 
@@ -19,13 +33,5 @@ public class Customer extends User {
     @Override
     public String getRole() {
         return "CUSTOMER";
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-    public void setBalance(double balance) {
-        this.balance = balance;
     }
 }

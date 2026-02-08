@@ -1,20 +1,25 @@
 package service;
-
-import model.Cart;
-import model.Product;
+import model.*;
 import repository.JCartRepository;
+import repository.JCustomerRepository;
 
 
 public class CustomerService {
     private final  JCartRepository cartRepo;
+    private final  JCustomerRepository customerRepo;
 
 
-    public CustomerService(JCartRepository cartRepo) {
+
+    public CustomerService(JCartRepository cartRepo,  JCustomerRepository customerRepo) {
         this.cartRepo = cartRepo;
+        this.customerRepo = customerRepo;
     }
 
-    public Cart getShoppingCart(int currId){
+    public Cart getShoppingCart(Customer customer) {
+        int currId = customerRepo.getId(customer.getUsername());
         if (cartRepo.getById(currId) == null){
+
+
             Cart newCart = new Cart(currId);
             cartRepo.addItem(newCart);
             return newCart;        }
@@ -24,30 +29,21 @@ public class CustomerService {
 
     }
 
-    public void addToCart(int currId, Product product){
-        Cart cart = getShoppingCart(currId);
+    public void addToCart(Customer customer, Product product){
+        int currId = customerRepo.getId(customer.getUsername());
+
+        Cart cart = getShoppingCart(customer);
         cart.addToItems(product);
         cartRepo.updateItem(cart);
     }
 
-    public void removeFromCart(int currId, Product product){
-        Cart cart = getShoppingCart(currId);
+    public void removeFromCart(Customer customer, Product product){
+        int currId = customerRepo.getId(customer.getUsername());
+
+        Cart cart = getShoppingCart(customer);
         cart.removeFromItems(product);
         cartRepo.updateItem(cart);
     }
 
-    public void removeProductCompletely(int customerId, Product product) {
-        Cart cart = getShoppingCart(customerId);
-
-        if (cart == null || cart.getCartItems() == null) {
-            return;
-        }
-
-        while (cart.getCartItems().contains(product)) {
-            cart.getCartItems().remove(product);
-        }
-    }
-
-
-
+    
 }

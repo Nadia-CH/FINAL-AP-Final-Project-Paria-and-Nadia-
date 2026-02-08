@@ -11,7 +11,7 @@ import java.net.URL;
 public class CustomerProductView extends JPanel {
     private JButton btnAdd;
     private JButton btnRemove;
-    private Product product;
+//    private Product product;
     public CustomerProductView(Product product) {
 
         FlatLightLaf.setup();
@@ -69,7 +69,7 @@ public class CustomerProductView extends JPanel {
         add(spacer, gbc);
 
 
-        // 3. Buttons Section (Bottom or Right)
+        // Buttons Section
         gbc.gridy = 4; gbc.gridx = 0;
         gbc.gridwidth = 4;
         gbc.gridheight = 1;
@@ -124,45 +124,3 @@ public class CustomerProductView extends JPanel {
     public JButton getBtnAdd() { return btnAdd; }
     public JButton getBtnRemove() { return btnRemove; }
 }
-//package gui;
-//
-//import com.formdev.flatlaf.FlatLightLaf;
-//import model.Product;
-//import javax.swing.*;
-//import java.awt.*;
-//
-//public class CustomerProductView extends JPanel {
-//    private JButton btnAdd;
-//    private Product product;
-//
-//    public CustomerProductView(Product product) {
-//        this.product = product;
-//        FlatLightLaf.setup();
-//
-//        setLayout(new BorderLayout());
-//        setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-//        setPreferredSize(new Dimension(300, 100));
-//        setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
-//
-//        // Info
-//        JPanel infoPanel = new JPanel(new GridLayout(2, 1));
-//        JLabel nameLabel = new JLabel("  " + product.getName());
-//        nameLabel.setFont(new Font("SansSerif", Font.BOLD, 16));
-//        JLabel priceLabel = new JLabel("  Price: $" + product.getPrice());
-//
-//        infoPanel.add(nameLabel);
-//        infoPanel.add(priceLabel);
-//        add(infoPanel, BorderLayout.CENTER);
-//
-//        // Button
-//        btnAdd = new JButton("Add to Cart");
-//        btnAdd.setBackground(new Color(46, 204, 113));
-//        btnAdd.setForeground(Color.WHITE);
-//
-//        JPanel btnPanel = new JPanel();
-//        btnPanel.add(btnAdd);
-//        add(btnPanel, BorderLayout.EAST);
-//    }
-//
-//    public JButton getBtnAdd() { return btnAdd; }
-//}

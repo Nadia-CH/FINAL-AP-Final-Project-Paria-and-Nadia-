@@ -16,8 +16,7 @@ public class CustomerEntryPanel extends JPanel {
     private Customer customer;
 
     private JPanel listContainer;
-    private JButton btnCart;
-    private JButton btnPurchase;
+    private JButton btnCart;// the shopping cart button
     private JButton btnLogout;
 
     public CustomerEntryPanel(JProductRepository pr, CustomerService service, Customer customer) {
@@ -36,14 +35,14 @@ public class CustomerEntryPanel extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // 1. Header Section
+        //Header Section
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 4;
         gbc.weighty = 0.25;
         add(createHeaderPanel(), gbc);
 
-        // Search Bar
+        //Search Bar
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -51,7 +50,7 @@ public class CustomerEntryPanel extends JPanel {
         add(createSearchBar(), gbc);
 
 
-        // 3. Product List (Left Side)
+        //Product List (Left Side)
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
@@ -61,7 +60,7 @@ public class CustomerEntryPanel extends JPanel {
 
         add(createProductScrollPanel(), gbc);
 
-        // 4. Sorting Bar (Above buttons)
+        //Sorting Bar (Above buttons)
         gbc.gridx = 2;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
@@ -80,7 +79,7 @@ public class CustomerEntryPanel extends JPanel {
         spacer.setOpaque(false);
         add(spacer, gbc);
 
-        // 5. Action Buttons (Bottom Right)
+        //Action Buttons (Bottom Right)
         gbc.gridx = 2;
         gbc.gridy = 7;
         gbc.gridwidth = 1;
@@ -115,29 +114,6 @@ public class CustomerEntryPanel extends JPanel {
         return panel;
     }
 
-
-//    private JComponent createProductScrollPanel() {
-//        JPanel listContainer = new JPanel();
-//        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
-//
-//        // Fill with cards
-//        for (Product p : pr.getAll()) {
-//            CustomerProductView card = new CustomerProductView(p);
-//            listContainer.add(card);
-//        }
-//        listContainer.add(Box.createVerticalGlue());
-//
-//        JScrollPane scrollPane = new JScrollPane(listContainer);
-//
-//        // THIS LINE IS THE KEY:
-//        // It forces the internal panel to match the width of the scroll pane's window.
-//        scrollPane.setViewportView(listContainer);
-//
-//        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-//        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-//
-//        return scrollPane;
-//    }
 
 
     private JPanel createSortingPanel() {
@@ -181,71 +157,6 @@ public class CustomerEntryPanel extends JPanel {
 
     }
 
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame frame = new JFrame("Customer System");
-//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//            frame.add(new CustomerEntryPanel());
-//            frame.setSize(1200, 600);
-//            frame.setLocationRelativeTo(null);
-//            frame.setVisible(true);
-//        });
-//    }
-
-    //package gui;
-//
-//import com.formdev.flatlaf.FlatLightLaf;
-//import javax.swing.*;
-//import javax.swing.border.EmptyBorder;
-//import java.awt.*;
-//import model.*;
-//import repository.*;
-//import service.*;
-//
-//public class CustomerEntryPanel extends JPanel {
-//
-//    private JProductRepository pr;
-//    private CustomerService customerService;
-//    private Customer customer;
-//
-//    private JPanel listContainer;
-//    private JButton btnCart;
-//    private JButton btnLogout;
-//
-//    public CustomerEntryPanel(JProductRepository pr, CustomerService service, Customer customer) {
-//        this.pr = pr;
-//        this.customerService = service;
-//        this.customer = customer;
-//
-//        FlatLightLaf.setup();
-//        setLayout(new GridBagLayout());
-//        setBorder(new EmptyBorder(20, 20, 20, 20));
-//        initializeUI();
-//    }
-//
-//    private void initializeUI() {
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        gbc.fill = GridBagConstraints.BOTH;
-//        gbc.insets = new Insets(10, 10, 10, 10);
-//
-//        // Header
-//        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 4; gbc.weighty = 0.1;
-//        add(createHeaderPanel(), gbc);
-//
-//        // Product List
-//        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 4; gbc.weighty = 1.0;
-//        add(createProductScrollPanel(), gbc);
-//
-//        // Buttons (Footer)
-//        gbc.gridx = 2; gbc.gridy = 2; gbc.gridwidth = 1; gbc.weighty = 0.05;
-//        btnCart = createStyledButton("Shopping Cart", new Color(154, 45, 205));
-//        add(btnCart, gbc);
-//
-//        gbc.gridx = 3; gbc.gridy = 2;
-//        btnLogout = createStyledButton("Logout", new Color(170, 150, 89));
-//        add(btnLogout, gbc);
-//    }
-//
     private JComponent createProductScrollPanel() {
         listContainer = new JPanel();
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
@@ -266,8 +177,14 @@ public class CustomerEntryPanel extends JPanel {
 
             // --- ADD TO CART LOGIC ---
             card.getBtnAdd().addActionListener(e -> {
-                customerService.addToCart(customer.getId(), p);
+                customerService.addToCart(customer, p);
                 JOptionPane.showMessageDialog(this, p.getName() + " added to cart!");
+            });
+
+            card.getBtnRemove().addActionListener(e -> {
+                customerService.removeFromCart(customer, p);
+                JOptionPane.showMessageDialog(this, p.getName() + " item removed from your cart!");
+
             });
 
             listContainer.add(card);
@@ -276,16 +193,13 @@ public class CustomerEntryPanel extends JPanel {
         listContainer.repaint();
     }
 
-    //    // Getters for DisplayCustomer
+   // Getters for DisplayCustomer
     public JButton getBtnCart() {
         return btnCart;
     }
 
     public JButton getBtnLogout() {
         return btnLogout;
-    }
-
-    public JButton getBtnPurchase() {return btnPurchase;
     }
 }
 //    // Helpers
