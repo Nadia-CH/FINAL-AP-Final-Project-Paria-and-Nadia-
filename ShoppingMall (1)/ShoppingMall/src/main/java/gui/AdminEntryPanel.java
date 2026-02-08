@@ -90,7 +90,7 @@ public class AdminEntryPanel extends JPanel {
         title.setForeground(Color.WHITE);
         title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JLabel subtitle = new JLabel("Administrative Management Console");
+        JLabel subtitle = new JLabel("Admin Management");
         subtitle.setFont(new Font("SansSerif", Font.PLAIN, 14));
         subtitle.setForeground(new Color(189, 195, 199));
         subtitle.setHorizontalAlignment(SwingConstants.CENTER);

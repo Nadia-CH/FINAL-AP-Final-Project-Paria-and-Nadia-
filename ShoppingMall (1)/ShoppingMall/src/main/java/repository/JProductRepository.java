@@ -18,7 +18,7 @@ public class JProductRepository implements Repository<Product> {
     private final Gson gson;
 
     public JProductRepository() {
-        this.gson = new Gson();
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
         this.productMap = new HashMap<>();
 
         new File("src/main/resources").mkdirs();

@@ -1,1 +1,27 @@
+{
+  "1002": {
+    "name": "Race Car",
+    "category": "Toys",
+    "price": 12.0,
+    "stockQuantity": 3,
+    "productId": 1002,
+    "imagePath": "car.png"
+  },
+  "1003": {
+    "name": "Wooden Desk",
+    "category": "Furniture",
+    "price": 79.9,
+    "stockQuantity": 60,
+    "productId": 1003,
+    "imagePath": "desk.png"
+  },
+  "1001": {
+    "name": "Yuyu",
+    "category": "Toys",
+    "price": 9.99,
+    "stockQuantity": 10,
+    "productId": 1001,
+    "imagePath": "yoyo.png"
+  }
 
+}

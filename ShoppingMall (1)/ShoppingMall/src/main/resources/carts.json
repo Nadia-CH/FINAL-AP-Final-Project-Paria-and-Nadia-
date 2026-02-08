@@ -1,15 +1,14 @@
 {
   "2000": {
     "id": 2000,
-    "cartItems": [
-      {
-        "name": "cat",
-        "category": "toy",
-        "price": 50.0,
-        "stockQuantity": 5,
-        "productId": 1004,
-        "imagePath": "۲۰۲۴۰۲۰۴_۲۲۱۱۲۸.jpg"
-      }
-    ]
+    "cartItems": []
+  },
+  "2002": {
+    "id": 2002,
+    "cartItems": []
+  },
+  "2001": {
+    "id": 2001,
+    "cartItems": []
   }
 }

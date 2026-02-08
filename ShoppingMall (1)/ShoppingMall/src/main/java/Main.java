@@ -12,8 +12,15 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
 
+        JCustomerRepository customerRepository = new JCustomerRepository();
+
         JProductRepository pr = new JProductRepository();
+
         JCartRepository cr = new JCartRepository();
+
+
+
+
         JFrame frame = new JFrame("Shopping Mall");
 
         frame.setSize(1200, 600);
@@ -31,19 +38,20 @@ public class Main {
             // Switch based on what the user chose/entered
             if ("ADMIN".equalsIgnoreCase(role)) {
                 User user = login.getLoggedInUser();
-                JPanel adminPanel = DisplayAdmin.Display(pr, (Admin) user);
+                JPanel adminPanel = DisplayAdmin.Display(pr, (Admin) user, cr, customerRepository);
                 frame.add(adminPanel);
             } else {
-                User user = login.getLoggedInUser();
-                JPanel customerPanel = DisplayCustomer.createCustomerPanel(pr, (Customer) user, cr);
+                Customer customer = (Customer) login.getLoggedInUser();
+                customerRepository.register(customer.getUsername(),  customer.getPassword());
+                JPanel customerPanel = DisplayCustomer.createCustomerPanel(pr, customer, cr, customerRepository);
                 frame.add(customerPanel);
+
             }
 
             // 5. FINALLY, SHOW THE FRAME
             frame.setVisible(true);
 
-        } else {
-            // If they closed the login without success, just quit
+        }else {
             System.exit(0);
         }
     }

@@ -1,25 +1,4 @@
-//package gui;
-//import model.*;
-//import repository.*;
-//import service.*;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//
-//
-//public class DisplayCustomer {
-//    LoginDialog loginDialog;
-//    public static JPanel Display(JProductRepository pr, Customer customer, JCartRepository cr) {
-//        CardLayout cardLayout = new CardLayout();
-//        JPanel displayPanel = new JPanel(cardLayout);
-//        displayPanel.setBorder(BorderFactory.createTitledBorder("Customer Area"));
-//
-//        CustomerService service = new CustomerService(cr);
-//
-//        CustomerEntryPanel dashboard = new CustomerEntryPanel(pr);
-//
-//    }
-//}
+
 package gui;
 
 import javax.swing.*;
@@ -30,40 +9,38 @@ import service.*;
 
 public class DisplayCustomer {
 
-    public static JPanel createCustomerPanel(JProductRepository pr, Customer customer, JCartRepository cr) {
+    public static JPanel createCustomerPanel(JProductRepository pr, Customer customer, JCartRepository cr, JCustomerRepository customerRepo) {
 
-        // 1. Setup Layout
         CardLayout cardLayout = new CardLayout();
         JPanel displayPanel = new JPanel(cardLayout);
-        displayPanel.setBorder(BorderFactory.createTitledBorder("Welcome, " + customer.getUsername() + " Your Balance: " + customer.getBalance()));
+        String currUsername = customer.getUsername();
+        displayPanel.setBorder(BorderFactory.createTitledBorder("Welcome, " + currUsername));
 
-        // 2. Initialize Service (Shared between panels)
-        CustomerService service = new CustomerService(cr);
+        CustomerService service = new CustomerService(cr, customerRepo);
 
-        // 3. Create the Two Main Views
         CustomerEntryPanel dashboard = new CustomerEntryPanel(pr, service, customer);
-        ShoppingCartPanel cartPanel = new ShoppingCartPanel(service, customer);
+        ShoppingCartPanel cartPanel = new ShoppingCartPanel(service, customer, cr, pr, customerRepo);
 
-        // 4. Add them to the "Deck"
         displayPanel.add(dashboard, "Dashboard");
         displayPanel.add(cartPanel, "Cart");
 
-        // --- NAVIGATION LISTENERS ---
 
-        // A. Go to Cart (AND Refresh Data!)
+        // Go to Cart (AND Refresh Data!)
         dashboard.getBtnCart().addActionListener(e -> {
             cartPanel.refreshCart(); // Critical: Load latest items
             cardLayout.show(displayPanel, "Cart");
         });
 
-        // B. Back to Shop
+        // Back to Shop
         cartPanel.getBtnBack().addActionListener(e -> {
             cardLayout.show(displayPanel, "Dashboard");
         });
 
-        // C. Logout Logic
+        // purchase
+
+
+
         dashboard.getBtnLogout().addActionListener(e -> {
-            // Close current window
             Window currentWindow = SwingUtilities.getWindowAncestor(displayPanel);
             currentWindow.dispose();
 
@@ -79,11 +56,10 @@ public class DisplayCustomer {
                 newFrame.setSize(1200, 700);
                 newFrame.setLocationRelativeTo(null);
 
-                // Recursion: Re-open the correct panel
                 if (user instanceof Admin) {
-                    newFrame.add(DisplayAdmin.Display(pr, (Admin)user));
+                    newFrame.add(DisplayAdmin.Display(pr, (Admin)user, cr, customerRepo));
                 } else if (user instanceof Customer) {
-                    newFrame.add(DisplayCustomer.createCustomerPanel(pr, (Customer)user, cr));
+                    newFrame.add(DisplayCustomer.createCustomerPanel(pr, (Customer)user, cr, customerRepo));
                 }
                 newFrame.setVisible(true);
             } else {

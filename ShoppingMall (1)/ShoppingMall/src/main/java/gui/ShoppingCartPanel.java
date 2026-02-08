@@ -7,6 +7,9 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import model.*;
+import repository.JCartRepository;
+import repository.JCustomerRepository;
+import repository.JProductRepository;
 import service.*;
 
 public class ShoppingCartPanel extends JPanel {
@@ -19,12 +22,24 @@ public class ShoppingCartPanel extends JPanel {
     private JLabel lblTotal;
     private JButton btnBack;
     private JButton btnPurchase;
+    private JProductRepository productRepo;
+    private JCartRepository cartRepo;
+    int currId;
 
 
-    public ShoppingCartPanel(CustomerService customerService, Customer customer) {
+    public ShoppingCartPanel(CustomerService customerService, Customer customer, JCartRepository cartRepo, JProductRepository productRepo, JCustomerRepository customerRepo) {
         this.customerService = customerService;
         this.customer = customer;
-        this.cart = customerService.getShoppingCart(customer.getId());
+        this.cart = customerService.getShoppingCart(customer);
+
+        this.productRepo = productRepo;
+
+        this.cartRepo = cartRepo;
+
+        currId = customerRepo.getId(customer.getUsername());
+
+        Checkout checkout = new Checkout(productRepo, cartRepo);
+
 
         FlatLightLaf.setup();
         setLayout(new BorderLayout());
@@ -40,16 +55,17 @@ public class ShoppingCartPanel extends JPanel {
         headerPanel.add(header, BorderLayout.CENTER);
         add(headerPanel, BorderLayout.NORTH);
 
-//        // List
-//        listContainer = new JPanel();
-//        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+        // List
+        listContainer = new JPanel();
+        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+
+        JScrollPane scrollPane = new JScrollPane(listContainer);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(null);
+        add(listContainer, BorderLayout.CENTER);
 //
-//        JScrollPane scrollPane = new JScrollPane(listContainer);
-//        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-//        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-//        scrollPane.setBorder(null);
-//
-        add(createProductScrollPanel(), BorderLayout.CENTER);
+//        add(createProductScrollPanel(), BorderLayout.CENTER);
 
         // Footer
         JPanel footerPanel = new JPanel(new BorderLayout());
@@ -75,7 +91,7 @@ public class ShoppingCartPanel extends JPanel {
 
     public void refreshCart() {
         listContainer.removeAll();
-       Cart cart = customerService.getShoppingCart(customer.getId());
+        Cart cart = customerService.getShoppingCart(customer);
 
         if (cart.getCartItems().isEmpty()) {
             JLabel empty = new JLabel("Cart is empty");
@@ -102,40 +118,6 @@ public class ShoppingCartPanel extends JPanel {
     }
 
 
-    public void refreshList() {
-        listContainer.removeAll();
-        for (Product p : cart.getCartItems()) {
-            CustomerProductView card = new CustomerProductView(p);
-
-            // --- ADD TO CART LOGIC ---
-            card.getBtnAdd().addActionListener(e -> {
-                customerService.addToCart(customer.getId(), p);
-                JOptionPane.showMessageDialog(this, p.getName() + " added to cart!");
-            });
-
-            listContainer.add(card);
-        }
-        listContainer.revalidate();
-        listContainer.repaint();
-    }
-
-    // =========================
-    // Row for each product
-    // =========================
-
-
-    private JComponent createProductScrollPanel() {
-        listContainer = new JPanel();
-        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
-
-        JScrollPane scrollPane = new JScrollPane(listContainer);
-        scrollPane.setViewportView(listContainer);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
-        refreshList(); // Load Data
-        return scrollPane;
-    }
-
 
     private JPanel createRow(Product p, int qty) {
 
@@ -161,22 +143,29 @@ public class ShoppingCartPanel extends JPanel {
         btnRemoveAll.setForeground(Color.RED);
 
         btnIncrement.addActionListener(e -> {
-            customerService.addToCart(customer.getId(), p);
-//            refreshCart();
-            refreshList();
+            customerService.addToCart(customer, p);
+            refreshCart();
+//            refreshList();
         });
 
         btnDecrement.addActionListener(e -> {
-            customerService.removeFromCart(customer.getId(), p);
-//            refreshCart();
-            refreshList();
+            customerService.removeFromCart(customer, p);
+            refreshCart();
+//            refreshList();
+        });
+/// //////////////////////////////////
+        btnPurchase.addActionListener(e -> {
+            Checkout checkout = new Checkout(productRepo, cartRepo);
+            checkout.checkoutCustomerOrder(currId);
+            refreshCart();
+
         });
 
 
         btnRemoveAll.addActionListener(e -> {
-            customerService.removeProductCompletely(customer.getId(), p);
+//            customerService.removeProductCompletely(customer.getId(), p);
 //            refreshCart();
-            refreshList();
+//            refreshList();
         });
 
         btnPanel.add(btnIncrement);
@@ -193,5 +182,8 @@ public class ShoppingCartPanel extends JPanel {
 
     public JButton getBtnBack() {
         return btnBack;
+    }
+    public JButton getBtnPurchase() {
+        return  btnPurchase;
     }
 }
