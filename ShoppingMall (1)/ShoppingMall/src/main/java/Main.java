@@ -12,32 +12,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
 
-
-        Product yuyu = new Product("yuyu", "toy", 9.99, "yoyo.png");
-        yuyu.setStockQuantity(10);
-        yuyu.increaseStock(3);
-        yuyu.decreaseStock(5);
-        System.out.println(yuyu.getInfo());
-        Product car = new Product("car", "toy", 12.0, "Car.png");
-        System.out.println(car.getInfo());
-        Product desk = new Product("desk", "furniture", 79.9, "desk.png");
-
-        JProductRepository pr = new JProductRepository();
-        pr.addItem(yuyu);
-        pr.addItem(car);
-        pr.addItem(desk);
-        desk.setStockQuantity(60);
-        desk.decreaseStock(5);
-        pr.updateItem(desk);
-        for (int i = 0; i < pr.getAll().size(); i++) {
-            System.out.println(pr.getAll().get(i).getInfo());
-        }
-
         JCartRepository cr = new JCartRepository();
-
-
-
-
         JFrame frame = new JFrame("Shopping Mall");
 
         frame.setSize(1200, 600);
@@ -71,4 +46,5 @@ public class Main {
             System.exit(0);
         }
     }
+
 }
