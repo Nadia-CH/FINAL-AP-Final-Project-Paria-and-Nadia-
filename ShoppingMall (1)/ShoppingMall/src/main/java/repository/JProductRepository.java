@@ -24,6 +24,25 @@ public class JProductRepository implements Repository<Product> {
         new File("src/main/resources").mkdirs();
 
         loadData();
+        seedDemoData();
+    }
+    private void seedDemoData() {
+        Product yuyu = new Product("Yuyu", "Toys", 9.99, "yoyo.png");
+        yuyu.setStockQuantity(10);
+
+        Product car = new Product("Race Car", "Toys", 12.0, "car.png");
+        car.setStockQuantity(5);
+
+        Product desk = new Product("Wooden Desk", "Furniture", 79.9, "desk.png");
+        desk.setStockQuantity(60);
+
+        // Add them to the internal map/list
+        addItem(yuyu);
+        addItem(car);
+        addItem(desk);
+
+        // Save to file immediately so next time they load naturally
+        // (Assuming addItem calls saveData(), otherwise call saveData() here)
     }
 
 
