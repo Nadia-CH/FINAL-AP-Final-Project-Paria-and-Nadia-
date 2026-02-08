@@ -36,7 +36,7 @@ public class AdminViewDetail extends JDialog {
         mainPanel.add(new JLabel(product.getCategory()));
 
         mainPanel.add(new JLabel("Price:"));
-        mainPanel.add(new JLabel(product.getPrice() + " تومان"));
+        mainPanel.add(new JLabel(product.getPrice() + "$"));
 
         mainPanel.add(new JLabel("Stock Quantity:"));
         mainPanel.add(new JLabel(String.valueOf(product.getStockQuantity())));

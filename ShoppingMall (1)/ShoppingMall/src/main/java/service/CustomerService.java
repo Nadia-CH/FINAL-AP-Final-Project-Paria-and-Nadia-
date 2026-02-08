@@ -2,14 +2,14 @@ package service;
 
 import model.Cart;
 import model.Product;
-import repository.CartRepository;
+import repository.JCartRepository;
 
 
 public class CustomerService {
-    private final  CartRepository cartRepo;
+    private final  JCartRepository cartRepo;
 
 
-    public CustomerService(CartRepository cartRepo) {
+    public CustomerService(JCartRepository cartRepo) {
         this.cartRepo = cartRepo;
     }
 

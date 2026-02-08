@@ -1,231 +1,294 @@
 package gui;
 
+import com.formdev.flatlaf.FlatLightLaf; // Make sure FlatLaf is in your pom.xml
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import model.*;
+import model.Product;
+import repository.*;
+import service.*;
 
 
-// changes : search bar
-//buttons placement
-//scroll bar
-public class CustomerEntryPanel extends JPanel implements ActionListener {
+public class CustomerEntryPanel extends JPanel {
+    private JProductRepository pr;
+    private CustomerService customerService;
+    private Customer customer;
 
+    private JPanel listContainer;
+    private JButton btnCart;
+    private JButton btnLogout;
 
-    public CustomerEntryPanel() {
+    public CustomerEntryPanel(JProductRepository pr, CustomerService service, Customer customer) {
+        this.pr = pr;
+        this.customerService = service;
+        this.customer = customer;
+
+        FlatLightLaf.setup();
         setLayout(new GridBagLayout());
+        setBorder(new EmptyBorder(20, 20, 20, 20));
         initializeUI();
     }
 
     private void initializeUI() {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(5, 10, 5, 10);
+        gbc.insets = new Insets(10, 10, 10, 10);
 
-        // 1. Title Panel (Row 0, spans 2 columns)
+        // 1. Header Section
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 8;
-        gbc.gridheight = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 0.1;
-        add(createTitlePanel(), gbc);
-
-
-
-        // 2. Sorting Bar (Row 1, Column 1 - right side)
-        gbc.gridx = 4;
-        gbc.gridy = 2;
         gbc.gridwidth = 4;
-        gbc.gridheight = 1;
-        gbc.weightx = 0.3;
-        gbc.weighty = 0.05;
-        add(createSortingPanel(), gbc);
+        gbc.weighty = 0.25;
+        add(createHeaderPanel(), gbc);
 
-        // search bar
+        // Search Bar
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 4;
-        gbc.gridheight = 1;
-        gbc.weightx = 0.3;
-        gbc.weighty = 0.05;
-        add(new JTextField(""), gbc);
+        gbc.gridwidth = 2;
+        gbc.weighty = 0.1;
+        add(createSearchBar(), gbc);
 
 
-        // 3. Product Scroll Bar (Row 2, Column 0 - left side)
+        // 3. Product List (Left Side)
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
-        gbc.gridheight = 4;// Span 2 rows for product list
-        gbc.weightx = 0.7;
-        gbc.weighty = 0.9;
+        gbc.gridheight = 5;
+        gbc.weightx = 0.6;
+        gbc.weighty = 0.625;
+
         add(createProductScrollPanel(), gbc);
 
-        // 5. Logout Button (Row 3, Column 1 - right side)
-        gbc.gridx = 7;
-        gbc.gridy = 6;
+        // 4. Sorting Bar (Above buttons)
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 1;
+        gbc.weightx = 0.4;
+        gbc.weighty = 0.1;
+        add(createSortingPanel(), gbc);
+
+        // Spacer
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 4;
+        gbc.weighty = 1.0;
+        JPanel spacer = new JPanel();
+        spacer.setOpaque(false);
+        add(spacer, gbc);
+
+        // 5. Action Buttons (Bottom Right)
+        gbc.gridx = 2;
+        gbc.gridy = 7;
         gbc.gridwidth = 1;
-        gbc.weighty = 0.0;
-        add(createLogoutPanel(), gbc);
+        gbc.gridheight = 1;
+        gbc.weightx = 0.2;
+        gbc.weighty = 0.2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.ipady = 20;
+        btnCart =createStyledButton("Shopping Cart", new Color(154, 45, 205));
+        add(btnCart, gbc);
 
-        // shopping cart button
-        gbc.gridx = 4;
-        gbc.gridy = 6;
-        gbc.gridwidth = 3;
-        gbc.weighty = 0.0;
-        add(new JButton("shopping cart"), gbc);
+        gbc.gridx = 3;
+        gbc.gridy = 7;
+        btnLogout =createStyledButton("Logout", new Color(205, 202, 45));
+        add(btnLogout, gbc);
     }
 
-    private JPanel createTitlePanel() {
-        // this syntax creates anonymous inner class
-        // we override the paintComponent from JPanel
-        JPanel panel = getTitlePanel();
+    private JPanel createHeaderPanel() {
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        panel.setBackground(new Color(2, 9, 99)); // Deep charcoal blue
+        panel.putClientProperty("FlatLaf.style", "arc: 20"); // Rounded corners for panel
 
-        JLabel titleLabel = new JLabel("Furniture and Toy store");
+        JLabel title = new JLabel("Furniture & Toy Store");
+        title.setFont(new Font("SansSerif", Font.BOLD, 22));
+        title.setForeground(Color.WHITE);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
 
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
+        panel.add(title);
 
-        panel.add(titleLabel, BorderLayout.CENTER);
-
+        panel.setPreferredSize(new Dimension(0, 80));
         return panel;
     }
-    private JPanel getTitlePanel() {
-        JPanel panel = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getBackground());
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30); // 30px corner radius
-                g2.dispose();
-            }
-        };
-        panel.setBackground(new Color(250, 150, 200));
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        return panel;
-    }
+
+
+//    private JComponent createProductScrollPanel() {
+//        JPanel listContainer = new JPanel();
+//        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+//
+//        // Fill with cards
+//        for (Product p : pr.getAll()) {
+//            CustomerProductView card = new CustomerProductView(p);
+//            listContainer.add(card);
+//        }
+//        listContainer.add(Box.createVerticalGlue());
+//
+//        JScrollPane scrollPane = new JScrollPane(listContainer);
+//
+//        // THIS LINE IS THE KEY:
+//        // It forces the internal panel to match the width of the scroll pane's window.
+//        scrollPane.setViewportView(listContainer);
+//
+//        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+//        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+//
+//        return scrollPane;
+//    }
 
 
     private JPanel createSortingPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        panel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-                "Sort Options"
-        ));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setBorder(BorderFactory.createTitledBorder("Display Settings"));
 
-        JLabel sortLabel = new JLabel("Sort by:");
-        sortLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        String[] options = {"Time Added", "Price (Asc)", "Price (Desc)", "Stock Level"};
+        JComboBox<String> combo = new JComboBox<>(options);
+        combo.putClientProperty("JComponent.roundRect", true); // Modern rounded combo box
 
-        String[] sortOptions = {
-                "Default (Time Added)",
-                "Price (High to Low)",
-                "Stock Quantity"
-        };
-
-        JComboBox<String> sortCombo = new JComboBox<>(sortOptions);
-        sortCombo.setPreferredSize(new Dimension(180, 25));
-
-        panel.add(sortLabel);
-        panel.add(sortCombo);
-
+        panel.add(new JLabel("Sort Inventory:"));
+        panel.add(combo);
         return panel;
     }
 
-    private JPanel createProductScrollPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-                "Products"
-        ));
+    private JButton createStyledButton(String text, Color bg) {
+        JButton btn = new JButton(text);
+        btn.setBackground(bg);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("SansSerif", Font.BOLD, 13));
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Create sample product list
-        DefaultListModel<String> productListModel = new DefaultListModel<>();
-        productListModel.addElement("☕ Coffee - $300 - Stock: 18");
-        productListModel.addElement("☕ Coffee Ground - $100 - Stock: 199");
-        productListModel.addElement("🌱 Coffee Beans - $250 - Stock: 7");
-        productListModel.addElement("🍵 Green Tea - $150 - Stock: 42");
-        productListModel.addElement("🍫 Chocolate - $200 - Stock: 25");
-        productListModel.addElement("🍪 Cookies - $80 - Stock: 56");
-        productListModel.addElement("🥤 Juice - $120 - Stock: 34");
-        productListModel.addElement("🍰 Cake - $350 - Stock: 8");
+        // FlatLaf rounded button style
+        btn.putClientProperty("JButton.buttonType", "roundRect");
+        btn.setPreferredSize(new Dimension(90, 18));
 
-        JList<String> productList = new JList<>(productListModel);
-        productList.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        productList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        JScrollPane scrollPane = new JScrollPane(productList);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
-        panel.add(scrollPane, BorderLayout.CENTER);
-        return panel;
+        return btn;
     }
 
-    private JPanel createAddProductPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        gbc.weightx = 1.0;
-
-        JButton addButton = new JButton("Add Product");
-        addButton.setFont(new Font("Arial", Font.BOLD, 14));
-        addButton.setBackground(new Color(46, 204, 113));
-        addButton.setForeground(Color.WHITE);
-        addButton.setPreferredSize(new Dimension(200, 40));
-        addButton.setFocusPainted(false);
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(addButton, gbc);
+    private JPanel createSearchBar() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setBorder(BorderFactory.createTitledBorder("Search Bar"));
+        JLabel searchLabel = new JLabel("Search Product:");
+        searchLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        panel.add(searchLabel);
+        JTextField searchField = new JTextField(30);
+        panel.add(searchField);
 
         return panel;
+
     }
 
-    private JPanel createLogoutPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame frame = new JFrame("Customer System");
+//            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//            frame.add(new CustomerEntryPanel());
+//            frame.setSize(1200, 600);
+//            frame.setLocationRelativeTo(null);
+//            frame.setVisible(true);
+//        });
+//    }
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 10, 0, 10);
-        gbc.weightx = 1.0;
+    //package gui;
+//
+//import com.formdev.flatlaf.FlatLightLaf;
+//import javax.swing.*;
+//import javax.swing.border.EmptyBorder;
+//import java.awt.*;
+//import model.*;
+//import repository.*;
+//import service.*;
+//
+//public class CustomerEntryPanel extends JPanel {
+//
+//    private JProductRepository pr;
+//    private CustomerService customerService;
+//    private Customer customer;
+//
+//    private JPanel listContainer;
+//    private JButton btnCart;
+//    private JButton btnLogout;
+//
+//    public CustomerEntryPanel(JProductRepository pr, CustomerService service, Customer customer) {
+//        this.pr = pr;
+//        this.customerService = service;
+//        this.customer = customer;
+//
+//        FlatLightLaf.setup();
+//        setLayout(new GridBagLayout());
+//        setBorder(new EmptyBorder(20, 20, 20, 20));
+//        initializeUI();
+//    }
+//
+//    private void initializeUI() {
+//        GridBagConstraints gbc = new GridBagConstraints();
+//        gbc.fill = GridBagConstraints.BOTH;
+//        gbc.insets = new Insets(10, 10, 10, 10);
+//
+//        // Header
+//        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 4; gbc.weighty = 0.1;
+//        add(createHeaderPanel(), gbc);
+//
+//        // Product List
+//        gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 4; gbc.weighty = 1.0;
+//        add(createProductScrollPanel(), gbc);
+//
+//        // Buttons (Footer)
+//        gbc.gridx = 2; gbc.gridy = 2; gbc.gridwidth = 1; gbc.weighty = 0.05;
+//        btnCart = createStyledButton("Shopping Cart", new Color(154, 45, 205));
+//        add(btnCart, gbc);
+//
+//        gbc.gridx = 3; gbc.gridy = 2;
+//        btnLogout = createStyledButton("Logout", new Color(170, 150, 89));
+//        add(btnLogout, gbc);
+//    }
+//
+    private JComponent createProductScrollPanel() {
+        listContainer = new JPanel();
+        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
 
-        JButton logoutButton = new JButton("Logout");
-        logoutButton.setFont(new Font("Arial", Font.BOLD, 14));
-        logoutButton.setBackground(new Color(231, 76, 60));
-        logoutButton.setForeground(Color.WHITE);
-        logoutButton.setPreferredSize(new Dimension(200, 40));
-        logoutButton.setFocusPainted(false);
+        JScrollPane scrollPane = new JScrollPane(listContainer);
+        scrollPane.setViewportView(listContainer);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        panel.add(logoutButton, gbc);
-
-        return panel;
+        refreshList(); // Load Data
+        return scrollPane;
     }
 
-    // Test method
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Admin Panel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(900, 700);
+    //
+    public void refreshList() {
+        listContainer.removeAll();
+        for (Product p : pr.getAll()) {
+            CustomerProductView card = new CustomerProductView(p);
 
-            CustomerEntryPanel panel = new CustomerEntryPanel();
-            frame.add(panel);
+            // --- ADD TO CART LOGIC ---
+            card.getBtnAdd().addActionListener(e -> {
+                customerService.addToCart(customer.getId(), p);
+                JOptionPane.showMessageDialog(this, p.getName() + " added to cart!");
+            });
 
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == "Logout") {
-
+            listContainer.add(card);
         }
+        listContainer.revalidate();
+        listContainer.repaint();
+    }
 
+    //    // Getters for DisplayCustomer
+    public JButton getBtnCart() {
+        return btnCart;
+    }
+
+    public JButton getBtnLogout() {
+        return btnLogout;
     }
 }
+//    // Helpers
+//    private JPanel createHeaderPanel() {
+//        JPanel p = new JPanel(); p.add(new JLabel("Welcome to the Store")); return p;
+//    }
+//    private JButton createStyledButton(String text, Color bg) {
+//        JButton b = new JButton(text); b.setBackground(bg); b.setForeground(Color.WHITE); return b;
+//    }
+//}

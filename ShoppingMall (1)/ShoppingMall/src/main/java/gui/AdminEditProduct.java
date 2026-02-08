@@ -10,18 +10,23 @@ public class AdminEditProduct extends JDialog implements ActionListener {
 
     private JTextField priceField;
     private JTextField quantityField;
-    private JButton changeImage;
+
     private JButton submit;
-    private File selectedImage;
+    private boolean submitted = false;
 
     public AdminEditProduct(Frame parent, String productName, double currentPrice, int currentStock) {
         super(parent, "Edit Product: " + productName, true);
 
 
-        setLayout(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setContentPane(mainPanel);
+
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
 
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
         add(new JLabel("Set new price:"), gbc);
@@ -38,33 +43,41 @@ public class AdminEditProduct extends JDialog implements ActionListener {
         add(quantityField, gbc);
 
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 1;
-        changeImage = new JButton("Change Image");
-        changeImage.addActionListener(this);
-        add(changeImage, gbc);
+//        changeImage = new JButton("Change Image");
+//        changeImage.addActionListener(this);
+//        add(changeImage, gbc);
 
         gbc.gridx = 1; gbc.gridy = 4;
         submit = new JButton("Submit");
         submit.addActionListener(this);
         add(submit, gbc);
 
+        this.setMinimumSize(new Dimension(350, 0));
+
         pack();
         setLocationRelativeTo(parent);
     }
 
+    public double getNewPrice() {
+        return Double.parseDouble(priceField.getText());
+    }
+
+    public int getNewQuantity() {
+        return Integer.parseInt(quantityField.getText());
+    }
+
+    public boolean isSubmitted() { return submitted; }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == changeImage) {
-            JFileChooser fileChooser = new JFileChooser();
-            int result = fileChooser.showOpenDialog(this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                selectedImage = fileChooser.getSelectedFile();
-                JOptionPane.showMessageDialog(this, "Image selected: " + selectedImage.getName());
-            }
-        }
-
         if (e.getSource() == submit) {
-            System.out.println("Updating product to Price: " + priceField.getText());
-            dispose();
+            try {
+                // Validation logic...
+                submitted = true; // Set flag to true
+                dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input!");
+            }
         }
     }
 }

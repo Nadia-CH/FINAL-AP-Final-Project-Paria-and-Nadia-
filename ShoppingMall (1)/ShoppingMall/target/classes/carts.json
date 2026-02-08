@@ -1,0 +1,39 @@
+{
+  "2000": {
+    "id": 2000,
+    "cartItems": [
+      {
+        "name": "car",
+        "category": "toy",
+        "price": 12.0,
+        "stockQuantity": 1,
+        "productId": 1002,
+        "imagePath": "Car.png"
+      },
+      {
+        "name": "car",
+        "category": "toy",
+        "price": 12.0,
+        "stockQuantity": 1,
+        "productId": 1002,
+        "imagePath": "Car.png"
+      },
+      {
+        "name": "yuyu",
+        "category": "toy",
+        "price": 9.99,
+        "stockQuantity": 8,
+        "productId": 1001,
+        "imagePath": "yoyo.png"
+      },
+      {
+        "name": "cat",
+        "category": "toy",
+        "price": 50.0,
+        "stockQuantity": 5,
+        "productId": 1004,
+        "imagePath": "۲۰۲۴۰۲۰۴_۲۲۱۱۲۸.jpg"
+      }
+    ]
+  }
+}

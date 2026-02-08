@@ -7,13 +7,18 @@ public class Product {
     private int stockQuantity = 1;
     private int productId;
 
+    private String imagePath;
+
     private static int generatedId = 1000;
 
-    public Product(String name, String category, double price) {
+    public Product() {}
+
+    public Product(String name, String category, double price, String imagePath) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.productId = ++generatedId;
+        this.imagePath = imagePath;
     }
 
     public void increaseStock(int amount ) {
@@ -75,6 +80,14 @@ public class Product {
         else {
             throw new IllegalArgumentException("invalid price amount");
         }
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public String getInfo() {

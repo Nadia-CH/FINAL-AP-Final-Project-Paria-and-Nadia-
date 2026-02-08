@@ -1,14 +1,14 @@
 package service;
 
 import model.Product;
-import repository.ProductRepository;
+import repository.JProductRepository;
 
 // implementation of admin services
 // changing the product image??
 public class AdminService {
-    private final ProductRepository productRepo;
+    private final JProductRepository productRepo;
 
-    public AdminService(ProductRepository productRepo) {
+    public AdminService(JProductRepository productRepo) {
         this.productRepo = productRepo;
     }
 

@@ -1,25 +1,30 @@
 package gui;
 
 import com.formdev.flatlaf.FlatLightLaf; // Make sure FlatLaf is in your pom.xml
-import model.Product;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-public class AdminEntryPanel  extends JPanel implements ActionListener {
+import repository.*;
+import model.*;
+import service.*;
 
-    private static MainPanel mainpnl;
-
-    private JButton btnAddProduct;
+public class AdminEntryPanel extends JPanel {
+    private JProductRepository pr;
+    private Admin admin;
+    AdminService adminService;
+    private JButton btnAdd;
+    JPanel listContainer;
     private JButton btnLogout;
-    private Product product;
 
-    public AdminEntryPanel(MainPanel main, Product p1) {
-        this.mainpnl = main;
-        this.product = p1;
+
+    public AdminEntryPanel( JProductRepository pr, Admin admin ) {
+        this.pr = pr;
+        this.admin = admin;
+        this.adminService = new AdminService(pr);
 
         // Apply FlatLaf if it hasn't been applied in Main
         FlatLightLaf.setup();
@@ -42,7 +47,7 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         // 2. Welcome Message (Replaced TextArea with Labels)
         gbc.gridx = 2; gbc.gridy = 1;
         gbc.gridwidth = 2; gbc.weightx = 0.4; gbc.weighty = 0.1;
-        add(createWelcomePanel("Admin User"), gbc);
+        add(createWelcomePanel(admin.getName()), gbc);
 
         // 3. Product List (Left Side)
         gbc.gridx = 0; gbc.gridy = 1;
@@ -63,14 +68,15 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         gbc.gridwidth = 1; gbc.gridheight = 1;
         gbc.weightx = 0.2;
         gbc.weighty = 0.02;
+        btnAdd = createStyledButton("Add Product", new Color(217, 72, 173));
 
-        btnAddProduct = createStyledButton("Add Product", new Color(217, 72, 173));
-        btnAddProduct.addActionListener(this);
-        add(btnAddProduct, gbc);
+
+
+
+        add(btnAdd, gbc);
 
         gbc.gridx = 3; gbc.gridy = 3;
         btnLogout = createStyledButton("Logout", new Color(58, 176, 211));
-        btnLogout.addActionListener(this);
         add(btnLogout, gbc);
     }
 
@@ -110,28 +116,21 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         panel.add(nameLabel);
         return panel;
     }
-    private JComponent createProductScrollPanel() {
-        JPanel listContainer = new JPanel();
-        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
 
-        // Fill with cards
-        for (int i = 0; i < 10; i++) {
-            AdminProductView card = new AdminProductView(product,  "");
-            listContainer.add(card);
-        }
-        listContainer.add(Box.createVerticalGlue());
+private JComponent createProductScrollPanel() {
+    listContainer = new JPanel();
+    listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
 
-        JScrollPane scrollPane = new JScrollPane(listContainer);
+    JScrollPane scrollPane = new JScrollPane(listContainer);
+    scrollPane.setViewportView(listContainer);
+    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        // THIS LINE IS THE KEY:
-        // It forces the internal panel to match the width of the scroll pane's window.
-        scrollPane.setViewportView(listContainer);
+    // Load the data for the first time
+    refreshList();
 
-        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
-        return scrollPane;
-    }
+    return scrollPane;
+}
 
 
 
@@ -163,29 +162,64 @@ public class AdminEntryPanel  extends JPanel implements ActionListener {
         return btn;
     }
 
-    public static void main(String[] args) {
 
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Admin System");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(new AdminEntryPanel(mainpnl,new Product("ee","ww",300 )));
-            frame.setSize(1200, 600);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+    public JButton getBtnAdd() {
+        return btnAdd;
+    }
+    public JButton getBtnLogout() {
+        return btnLogout;
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnAddProduct) {
-            AddProductPanel addPanel = new AddProductPanel(mainpnl);
-            mainpnl.mainpanel.add(addPanel, "AddProduct");
-            mainpnl.cardlayout.show(mainpnl.mainpanel, "AddProduct");
+
+    public void refreshList() {
+        // clear the panel so we don't get duplicate items
+        listContainer.removeAll();
+
+        for (Product p : pr.getAll()) {
+            AdminProductView pView = new AdminProductView(p);
+
+            // delete
+            pView.btnDelete.addActionListener(e -> {
+                int confirm = JOptionPane.showConfirmDialog(this,
+                        "Delete " + p.getName() + "?", "Confirm", JOptionPane.YES_NO_OPTION);
+
+                if (confirm == JOptionPane.YES_OPTION) {
+                    adminService.delete(p.getProductId());
+                    refreshList();
+                }
+            });
+
+            // edit
+            pView.btnEdit.addActionListener(e -> {
+                Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+                AdminEditProduct editDlg = new AdminEditProduct(parent, p.getName(), p.getPrice(), p.getStockQuantity());
+                editDlg.setVisible(true);
+
+                if (editDlg.isSubmitted()) {
+                    adminService.editPrice(p.getProductId(), editDlg.getNewPrice());
+                    adminService.editStockQuantity(p.getProductId(), editDlg.getNewQuantity());
+
+                    refreshList();
+                }
+            });
+
+            // detals
+            pView.btnDetails.addActionListener(e -> {
+                Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+                AdminViewDetail detailDialog = new AdminViewDetail(parent, p);
+                detailDialog.setVisible(true);
+            });
+
+            listContainer.add(pView);
         }
-        if(e.getSource()== btnLogout) {
-            mainpnl.frame.dispose();
-            new MainPanel(product);
-        }
+
+        listContainer.add(Box.createVerticalGlue());
+        listContainer.revalidate();
+        listContainer.repaint();
+    }
+
+    public AdminService getAdminService() {
+        return adminService;
     }
 
 }
