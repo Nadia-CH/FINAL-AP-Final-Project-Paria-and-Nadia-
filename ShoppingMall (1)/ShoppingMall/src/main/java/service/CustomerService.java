@@ -36,5 +36,18 @@ public class CustomerService {
         cartRepo.updateItem(cart);
     }
 
-    
+    public void removeProductCompletely(int customerId, Product product) {
+        Cart cart = getShoppingCart(customerId);
+
+        if (cart == null || cart.getCartItems() == null) {
+            return;
+        }
+
+        while (cart.getCartItems().contains(product)) {
+            cart.getCartItems().remove(product);
+        }
+    }
+
+
+
 }

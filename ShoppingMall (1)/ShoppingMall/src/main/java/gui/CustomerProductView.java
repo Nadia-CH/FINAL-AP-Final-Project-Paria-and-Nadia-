@@ -122,6 +122,7 @@ public class CustomerProductView extends JPanel {
         }
     }
     public JButton getBtnAdd() { return btnAdd; }
+    public JButton getBtnRemove() { return btnRemove; }
 }
 //package gui;
 //
