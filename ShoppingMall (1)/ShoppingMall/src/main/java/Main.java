@@ -11,7 +11,7 @@ import javax.swing.*;
 // this is a test run
 public class Main {
     public static void main(String[] args) {
-
+        JProductRepository pr = new JProductRepository();
         JCartRepository cr = new JCartRepository();
         JFrame frame = new JFrame("Shopping Mall");
 
@@ -48,3 +48,4 @@ public class Main {
     }
 
 }
+
