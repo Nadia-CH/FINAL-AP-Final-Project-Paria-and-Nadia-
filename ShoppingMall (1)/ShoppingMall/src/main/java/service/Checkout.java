@@ -4,10 +4,10 @@ import repository.*;
 import model.*;
 
 public class Checkout {
-    private final ProductRepository productRepo;
-    private final CartRepository cartRepo;
+    private final JProductRepository productRepo;
+    private final JCartRepository cartRepo;
 
-    public Checkout(ProductRepository productRepo, CartRepository cartRepo) {
+    public Checkout(JProductRepository productRepo, JCartRepository cartRepo) {
         this.productRepo = productRepo;
         this.cartRepo = cartRepo;
     }

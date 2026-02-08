@@ -1,26 +1,27 @@
 package gui;
-import model.Product;
-
+import com.formdev.flatlaf.FlatLightLaf; // Make sure FlatLaf is in your pom.xml
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-
-public class AdminProductView extends JPanel implements ActionListener {
-    JButton btnEdit = new JButton("Edit");
-
-    JButton btnDelete = new JButton("Delete");
-    JButton btnDetails = new JButton("Details");
-
-    private Product product;
+import java.net.URL;
+import model.*;
+import service.*;
+import repository.*;
 
 
 
+public class AdminProductView extends JPanel {
+    public JButton btnEdit = new JButton("Edit");
+    public JButton btnDelete = new JButton("Delete");
+    public JButton btnDetails = new JButton("Details");
+    protected Product product;
 
+    public AdminProductView(Product product) {
+        this.product = product;
 
-    public AdminProductView(Product p1, String imgPath) {
-        this.product = p1;
+//        btnEdit.addActionListener(this);
 
         setLayout(new BorderLayout(15, 10));
         setBorder(BorderFactory.createCompoundBorder(
@@ -28,53 +29,59 @@ public class AdminProductView extends JPanel implements ActionListener {
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
         this.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+        this.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        this.setAlignmentX(Component.LEFT_ALIGNMENT); // Critical for BoxLayout
 
-        // 1. Image Section (Left)
+
+
+
+        // Image Section
         JLabel imgLabel = new JLabel();
-        imgLabel.setPreferredSize(new Dimension(100, 300));
-        imgLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        // Note: You'll eventually use ImageIcon here
-        add(imgLabel, BorderLayout.CENTER);
+        imgLabel.setPreferredSize(new Dimension(100, 100)); // Fixed size frame
+        imgLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imgLabel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
+        ImageIcon icon = loadScaledImage(product.getImagePath(), 100, 100);
+        if (icon != null) {
+            imgLabel.setIcon(icon);
+        } else {
+            imgLabel.setText("No Image");
+        }
 
-        // 3. Buttons Section (Bottom or Right)
+        add(imgLabel, BorderLayout.WEST);
+
+        // button section
+
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-
         btnPanel.add(btnEdit);
-        btnEdit.addActionListener(this);
         btnPanel.add(btnDelete);
-        btnDelete.addActionListener(this);
         btnPanel.add(btnDetails);
-        btnDetails.addActionListener(this);
-
         add(btnPanel, BorderLayout.SOUTH);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == btnDetails ) {
-            Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-            AdminViewDetail showDetail = new AdminViewDetail(parentFrame, product);
-            showDetail.setVisible(true);
-
-
-            //show details
-
-        }
-        if(e.getSource() == btnDelete ) {
-            // remove from repo
-
-        }
-        if(e.getSource() == btnEdit) {
-            Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-            AdminEditProduct editDlg = new AdminEditProduct(parentFrame, product.getName(), product.getPrice(), product.getStockQuantity());
-            editDlg.setVisible(true);
-            //open AdminEditProduct
-
+    private ImageIcon loadScaledImage(String imgPath, int w, int h) {
+        if (imgPath == null || imgPath.trim().isEmpty()) {
+            return null;
         }
 
+        // 2. Construct the path to the resources folder
+        // Note: We assume images are in src/main/resources/images/
+        String resourcePath = "/images/" + imgPath;
+
+        // 3. Try to find the file
+        URL imgUrl = getClass().getResource(resourcePath);
+
+        if (imgUrl != null) {
+            // 4. Load and Resize
+            ImageIcon original = new ImageIcon(imgUrl);
+            Image scaled = original.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+            return new ImageIcon(scaled);
+        } else {
+            // Debugging helper: Print error if image isn't found
+            System.err.println("⚠ Could not find image file: " + resourcePath);
+            return null;
+        }
     }
+
+
 }

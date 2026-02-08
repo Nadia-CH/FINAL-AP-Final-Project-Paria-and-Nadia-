@@ -4,80 +4,53 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import model.*;
 
 public class LoginDialog extends JDialog implements ActionListener {
 
-    JTextField username;
-    JPasswordField password;
-    JLabel  titleLabel;
-    JLabel  userLabel;
-    JLabel  passLabel;
-    JButton loginButton;
-    JButton cancelButton;
+    private JTextField username;
+    private JPasswordField password;
+    private JButton loginButton;
+    private JButton cancelButton;
 
     private boolean loginSuccess = false;
-    private String role;
-
-    void setLoginSuccess(boolean loginSuccess) {
-        this.loginSuccess = loginSuccess;
-    }
-
-    boolean isLoginSuccessful() {
-        return loginSuccess;
-    }
-
-    boolean isAdmin(){
-        if(username.getText().equals("admin") && password.getText().equals("1234")){
-            return true;
-        }
-        return false;
-    }
-
-    boolean isCustomer(){
-        if(username.getText().equals("user") && password.getText().equals("1111")){
-            return true;
-        }
-        return false;
-    }
-
-   void setRole(String role){
-        this.role = role;
-    }
-
-    String getRole(){
-        return role;
-    }
-
+    private User loggedInUser;
 
     public LoginDialog(JFrame parent) {
         super(parent, "Login", true);
 
         setLayout(new BorderLayout());
 
-        titleLabel = new JLabel("Pls Enter!", SwingConstants.CENTER);
+        // Header
+        JLabel titleLabel = new JLabel("Pls Enter!", SwingConstants.CENTER);
         titleLabel.setOpaque(true);
         titleLabel.setBackground(Color.GREEN);
-        titleLabel.setPreferredSize(new Dimension(300, 40));
+        titleLabel.setPreferredSize(new Dimension(300, 50));
         add(titleLabel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        userLabel = new JLabel("Username");
-        passLabel = new JLabel("Password");
+        // Username
+        gbc.gridx = 0; gbc.gridy = 0;
+        centerPanel.add(new JLabel("Username:"), gbc);
+        gbc.gridx = 1;
+        username = new JTextField(15);
+        centerPanel.add(username, gbc);
 
-        username = new JTextField();
-        password = new JPasswordField();
-
-        centerPanel.add(userLabel);
-        centerPanel.add(username);
-        centerPanel.add(passLabel);
-        centerPanel.add(password);
-
+        // Password
+        gbc.gridx = 0; gbc.gridy = 1;
+        centerPanel.add(new JLabel("Password:"), gbc);
+        gbc.gridx = 1;
+        password = new JPasswordField(15);
+        centerPanel.add(password, gbc);
 
         add(centerPanel, BorderLayout.CENTER);
 
+        // BUTTONS
         JPanel buttonPanel = new JPanel();
-
         loginButton = new JButton("Login");
         cancelButton = new JButton("Cancel");
 
@@ -86,28 +59,40 @@ public class LoginDialog extends JDialog implements ActionListener {
 
         buttonPanel.add(loginButton);
         buttonPanel.add(cancelButton);
-
         add(buttonPanel, BorderLayout.SOUTH);
 
 
+        this.pack();
+        this.setLocationRelativeTo(parent);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            if (isAdmin())
-            {
-                setLoginSuccess(true);
-                setRole("Admin");
-                dispose();
+            String userIn = username.getText();
+            String passIn = new String(password.getPassword());
 
-            } else {
-                setLoginSuccess(true);
-                setRole("Customer");
+            if (userIn.contains("ADMIN") && passIn.length() == 8) {
+                loginSuccess = true;
+                this.loggedInUser = new Admin(userIn, passIn);
                 dispose();
+            }
+            else if (passIn.length() == 8) {
+                loginSuccess = true;
+                this.loggedInUser = new Customer(userIn, passIn);
+                dispose();
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Invalid Username or Password!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else if (e.getSource() == cancelButton) {
             System.exit(0);
         }
     }
+    public User getLoggedInUser() {
+        return loggedInUser;
+    }
+
+    public boolean isLoginSuccessful() { return loginSuccess; }
+
 }

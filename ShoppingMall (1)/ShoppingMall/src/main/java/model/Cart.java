@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
-    private final int id;
+    private int id;
     private List<Product> cartItems;
+
+    public Cart() {}
 
     public Cart(int id) {
         this.id = id;
