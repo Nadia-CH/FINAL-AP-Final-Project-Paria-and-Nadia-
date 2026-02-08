@@ -35,7 +35,7 @@ public class DisplayCustomer {
         // 1. Setup Layout
         CardLayout cardLayout = new CardLayout();
         JPanel displayPanel = new JPanel(cardLayout);
-        displayPanel.setBorder(BorderFactory.createTitledBorder("Welcome, " + customer.getUsername()));
+        displayPanel.setBorder(BorderFactory.createTitledBorder("Welcome, " + customer.getUsername() + " Your Balance: " + customer.getBalance()));
 
         // 2. Initialize Service (Shared between panels)
         CustomerService service = new CustomerService(cr);

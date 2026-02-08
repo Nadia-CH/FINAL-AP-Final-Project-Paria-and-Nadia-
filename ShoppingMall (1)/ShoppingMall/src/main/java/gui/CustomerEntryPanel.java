@@ -17,6 +17,7 @@ public class CustomerEntryPanel extends JPanel {
 
     private JPanel listContainer;
     private JButton btnCart;
+    private JButton btnPurchase;
     private JButton btnLogout;
 
     public CustomerEntryPanel(JProductRepository pr, CustomerService service, Customer customer) {
@@ -282,6 +283,9 @@ public class CustomerEntryPanel extends JPanel {
 
     public JButton getBtnLogout() {
         return btnLogout;
+    }
+
+    public JButton getBtnPurchase() {return btnPurchase;
     }
 }
 //    // Helpers
